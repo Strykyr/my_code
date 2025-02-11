@@ -1,5 +1,6 @@
+#from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear, Transformer_my
+from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,Attention_LSTM
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -81,7 +82,7 @@ def my_data(split,data):
                     seq.append((train_seq, train_label))
         seq = MyDataset(seq)
         # 多线程取数据集
-        seq = DataLoader(dataset=seq, batch_size=300, shuffle=True, num_workers=4, drop_last=True)
+        seq = DataLoader(dataset=seq, batch_size=500, shuffle=True, num_workers=4, drop_last=True)
         return seq
     # 测试集
     else:
@@ -92,7 +93,7 @@ def my_data(split,data):
         # 归一化
         normalized_data = scaler.fit_transform(x)
         #for i in range(len(normalized_data) - 150):# 21秒
-        for i in range(len(normalized_data) - 150):
+        for i in range(len(normalized_data) - 190):
             test_seq = []
             test_label = []
             #for k in range(i,i+100):
@@ -103,7 +104,7 @@ def my_data(split,data):
                 #test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
             # 10个时间点3s
             #for k in range(i+100,i+150):
-            for k in range(i+100,i+150):
+            for k in range(i+100,i+190):
                 # 第一个测点
                 test_label.append([normalized_data[k,3], normalized_data[k,-1]])
                 # 第二个
@@ -133,14 +134,17 @@ class Exp_Main(Exp_Basic):
         model_dict = {
             'Autoformer': Autoformer,
             'Transformer': Transformer,
-            'Transformer_my': Transformer_my,
             'Informer': Informer,
             'DLinear': DLinear,
             'NLinear': NLinear,
             'Linear': Linear,
+            'Resnet_LSTM': Resnet_LSTM,
+            'Resnet': Resnet,
+            'LSTM': LSTM,
+            'Attention_LSTM':Attention_LSTM
         }
         model = model_dict[self.args.model].Model(self.args).float()
-
+        #print(model) #=============================================
         if self.args.use_multi_gpu and self.args.use_gpu:
             model = nn.DataParallel(model, device_ids=self.args.device_ids)
         return model
@@ -175,14 +179,21 @@ class Exp_Main(Exp_Basic):
                 # encoder - decoder
                 if 'Linear' in self.args.model:
                     outputs = self.model(batch_x)
+                elif 'Res' in self.args.model:
+                    outputs = self.model(batch_x)
+                elif 'LSTM' in self.args.model:
+                    outputs = self.model(batch_x)
                 else:
                     if self.args.output_attention:
                         outputs = self.model(batch_x, None, dec_inp, None)[0]
                     else:
                         outputs = self.model(batch_x, None, dec_inp, None)
                 f_dim = -1 if self.args.features == 'MS' else 0
-                outputs = outputs[:, -self.args.pred_len:, f_dim:]
-                batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
+                #outputs = outputs[:, -self.args.pred_len:, f_dim:]
+                #batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
+                #改====================
+                outputs = outputs[:, -self.args.pred_len:-20, f_dim:]
+                batch_y = batch_y[:, -self.args.pred_len:-20, f_dim:].to(self.device)
 
                 pred = outputs.detach().cpu()
                 true = batch_y.detach().cpu()
@@ -256,6 +267,10 @@ class Exp_Main(Exp_Basic):
                 # else:
                 if 'Linear' in self.args.model:
                         outputs = self.model(batch_x)
+                elif 'Res' in self.args.model:
+                        outputs = self.model(batch_x)
+                elif 'LSTM' in self.args.model:
+                        outputs = self.model(batch_x)
                 else:
                     if self.args.output_attention:
                         # outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
@@ -267,8 +282,11 @@ class Exp_Main(Exp_Basic):
                         outputs = self.model(batch_x, None, dec_inp, None, batch_y)
                 # print(outputs.shape,batch_y.shape)
                 f_dim = -1 if self.args.features == 'MS' else 0
-                outputs = outputs[:, -self.args.pred_len:, f_dim:]
-                batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
+                #outputs = outputs[:, -self.args.pred_len, f_dim:]
+                #batch_y = batch_y[:, -self.args.pred_len, f_dim:].to(self.device)
+                # 改========================
+                outputs = outputs[:, -self.args.pred_len:-20, f_dim:]
+                batch_y = batch_y[:, -self.args.pred_len:-20, f_dim:].to(self.device)
                 loss = criterion(outputs, batch_y)
                 train_loss.append(loss.item())
 
@@ -323,8 +341,27 @@ class Exp_Main(Exp_Basic):
         torch.save(self.model.state_dict(), best_model_path)
         self.model.load_state_dict(torch.load(best_model_path))
 
+        # 画loss
+        fig2 = plt.figure(figsize=(8,6))
+        plt.rcParams['font.size'] = 16
+        print(len(loss_all))
+        print(loss_all)
+        plt.plot(range(0,len(loss_all)),loss_all,label="train_loss",color='red',linewidth=1.5)
+        plt.plot(range(0,len(test_loss_all)),test_loss_all,label="test_loss",color='blue',linewidth=1.5)
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.legend()
+        check_path = os.path.join(self.folder_path, self.args.model,"img","loss.png")
+        dir_path = os.path.dirname(check_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path, exist_ok=True)
+        # 检查路径的父目录是否存在，如果不存在则创建它
+        dir_path = os.path.dirname(check_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path, exist_ok=True)
+        plt.savefig(self.folder_path + self.args.model + "/img/" + "loss.png")
 
-        #======保存loss
+
         data_rows = [{'loss': r, 'test loss': p} for r, p in zip(loss_all, test_loss_all)]
             # 将字典列表转换为DataFrame
         df = pd.DataFrame(data_rows)
@@ -342,7 +379,7 @@ class Exp_Main(Exp_Basic):
         
         
         #door
-        dict = ['100','200','400']
+        dict = ['11','12','13','ts1','ts2','ts3','21','22','23']
 
 
         #water
@@ -390,6 +427,10 @@ class Exp_Main(Exp_Basic):
                     # else:
                     if 'Linear' in self.args.model:
                             outputs = self.model(batch_x)
+                    elif 'Res' in self.args.model:
+                            outputs = self.model(batch_x)
+                    elif 'LSTM' in self.args.model:
+                            outputs = self.model(batch_x)
                     else:
                         if self.args.output_attention:
                             outputs = self.model(batch_x, None, dec_inp, None)[0]
@@ -414,12 +455,12 @@ class Exp_Main(Exp_Basic):
                     
 
                     #温度
-                    pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    pred = outputs[:, -25, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -25, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     
                     # 顶棚温度
-                    pre_t = outputs[:, -1, -1]
-                    true_t = batch_y[:, -1, -1].to(self.device)
+                    pre_t = outputs[:, -25, -1]
+                    true_t = batch_y[:, -25, -1].to(self.device)
  
                     # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
@@ -489,20 +530,28 @@ class Exp_Main(Exp_Basic):
             df.to_csv(self.folder_path + self.args.model +  '/' + dict[k] + 'ceiling.csv', index=False)
 
             print('==========  mse:{}, mae:{}'.format(mse, mae))
-
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # door
-
-            f.write(dict[j] + "temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "tmperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+"\n")
+            f.write(str(dict[k]) + "门口temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
-            f.write('\n')
-            f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(str(dict[k]) + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
             f.write('\n')
             f.write('\n')
             f.close()
 
+            # f = open(self.folder_path + self.args.model + "/result.txt", 'a')
+            # # door
+            # f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            # # water+exhaust
+            # #f.write(str(dict_dir[k]) + '##' + str(dict[k]) + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            # f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
+            # f.write('\n')
+            # f.write('\n')
+            # f.close()
         return
 
     def predict(self, setting, load=False):

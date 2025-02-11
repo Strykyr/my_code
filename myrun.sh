@@ -1,5 +1,6 @@
 seq_len=100
-folder_path=./data/exhaust/
+folder_path=./data2/exhaust_water/
+#folder_path=./data2/door1/
 
 if [ ! -d folder_path"logs" ]; then
     mkdir -p $folder_path"logs"
@@ -42,8 +43,8 @@ fi
 
 # done
 
-# # # Autoformer Informer Transformer 
-# for model_name in Transformer_my
+# # # Autoformer Informer Transformer , Resnet, LSTM , Attention_LSTM
+# for model_name in Resnet_LSTM 
 # do
 # python -u run.py \
 #   --is_training 1 \
@@ -61,20 +62,20 @@ fi
 
 
 # test 部分>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..
-for model_name in NLinear
-do
-python -u test.py \
-  --is_training 1 \
-  --model_id ETTh1_$seq_len'_'96 \
-  --model $model_name \
-  --folder_path $folder_path \
-  --features M \
-  --des 'Exp' \
-  --itr 1 --learning_rate 0.005 >$folder_path'logs/'$model_name'.log'
+# for model_name in Resnet_LSTM
+# do
+# python -u test.py \
+#   --is_training 1 \
+#   --model_id ETTh1_$seq_len'_'96 \
+#   --model $model_name \
+#   --folder_path $folder_path \
+#   --features M \
+#   --des 'Exp' \
+#   --itr 1 --learning_rate 0.005 >$folder_path'logs/'$model_name'.log'
 
-done
+# done
 
-for model_name in Transformer_my
+for model_name in Resnet_LSTM
 do
 python -u test.py \
   --is_training 1 \

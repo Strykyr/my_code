@@ -1,5 +1,5 @@
 from exp.exp_basic import Exp_Basic
-from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear, Transformer_my
+from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,Attention_LSTM
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -100,14 +100,14 @@ def my_data(split,data):
                 # 第一个测点
                 #test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
                 #第二个测定点
-                test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
+                test_seq.append([normalized_data[k,5],normalized_data[k,-1]])
             # 10个时间点3s
             #for k in range(i+100,i+150):
             for k in range(i+100,i+150):
                 # 第一个测点
                 #test_label.append([normalized_data[k,3], normalized_data[k,-1]])
                 # 第二个
-                test_label.append([normalized_data[k,10], normalized_data[k,-1]])
+                test_label.append([normalized_data[k,5], normalized_data[k,-1]])
             test_seq = torch.FloatTensor(test_seq).reshape(-1,2)
             test_label = torch.FloatTensor(test_label).reshape(-1,2)
             seq.append((test_seq, test_label))
@@ -133,11 +133,14 @@ class Exp_Main(Exp_Basic):
         model_dict = {
             'Autoformer': Autoformer,
             'Transformer': Transformer,
-            'Transformer_my': Transformer_my,
+            'Attention_LSTM': Attention_LSTM,
             'Informer': Informer,
             'DLinear': DLinear,
             'NLinear': NLinear,
             'Linear': Linear,
+            'Resnet_LSTM': Resnet_LSTM,
+            'Resnet': Resnet,
+            'LSTM': LSTM,
         }
         model = model_dict[self.args.model].Model(self.args).float()
 
@@ -256,6 +259,10 @@ class Exp_Main(Exp_Basic):
                 # else:
                 if 'Linear' in self.args.model:
                         outputs = self.model(batch_x)
+                elif 'Res' in self.args.model:
+                            outputs = self.model(batch_x)
+                elif 'LSTM' in self.args.model:
+                            outputs = self.model(batch_x)
                 else:
                     if self.args.output_attention:
                         # outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
@@ -342,7 +349,7 @@ class Exp_Main(Exp_Basic):
         
         
         #door
-        dict = ['100','200','400']
+        dict = ['11','12','13','ts1','ts2','ts3','21','22','23']
 
 
         #water
@@ -390,6 +397,10 @@ class Exp_Main(Exp_Basic):
                     # else:
                     if 'Linear' in self.args.model:
                             outputs = self.model(batch_x)
+                    elif 'Res' in self.args.model:
+                            outputs = self.model(batch_x)
+                    elif 'LSTM' in self.args.model:
+                            outputs = self.model(batch_x)
                     else:
                         if self.args.output_attention:
                             outputs = self.model(batch_x, None, dec_inp, None)[0]
@@ -399,7 +410,7 @@ class Exp_Main(Exp_Basic):
 
                     f_dim = -1 if self.args.features == 'MS' else 0
                     # print(outputs.shape,batch_y.shape)
-                    # outputs = outputs[:, -self.args.pred_len:, f_dim:]
+                    # outputs = outputs[:, -self.args.pred_len:, f_dim:]    
                     # batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
                     # outputs = outputs.detach().cpu().numpy()
                     # batch_y = batch_y.detach().cpu().numpy()
@@ -414,13 +425,19 @@ class Exp_Main(Exp_Basic):
                     
 
                     #温度
-                    pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
-                    
+                    #pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    #true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    #=========改
+                    pred = outputs[:, -30, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -30, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     # 顶棚温度
-                    pre_t = outputs[:, -1, -1]
-                    true_t = batch_y[:, -1, -1].to(self.device)
- 
+                
+                    #pre_t = outputs[:, -1, -1]
+                    #true_t = batch_y[:, -1, -1].to(self.device)
+                    #========
+                    pre_t = outputs[:, -30, -1]
+                    true_t = batch_y[:, -30, -1].to(self.device)
+                    
                     # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
                     trues_all.append(batch_y_all.detach().cpu().numpy())
@@ -447,11 +464,12 @@ class Exp_Main(Exp_Basic):
             #max_val = self.test_data[j].iloc[:,3].max()
             #print(min_val,"=============",max_val)
             # 第二个测点
-            min_val = self.test_data[j].iloc[:,10].min()
-            max_val = self.test_data[j].iloc[:,10].max()
+            min_val = self.test_data[j].iloc[:,5].min()
+            max_val = self.test_data[j].iloc[:,5].max()
 
             min_val_t = self.test_data[j].iloc[:,-1].min()
             max_val_t = self.test_data[j].iloc[:,-1].max()
+            
             print(min_val_t,"######",max_val_t)
 
             preds = torch.FloatTensor(preds).detach().cpu().numpy()
@@ -487,15 +505,15 @@ class Exp_Main(Exp_Basic):
             # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
             # # 将字典列表转换为DataFrame
             # df = pd.DataFrame(data_rows)
-            # # 将DataFrame保存到CSV文件
+            # #将DataFrame保存到CSV文件
             # df.to_csv(self.folder_path + self.args.model +  '/' + dict[k] + 'ceiling.csv', index=False)
 
-            # print('==========  mse:{}, mae:{}'.format(mse, mae))
+            # # print('==========  mse:{}, mae:{}'.format(mse, mae))
 
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
-            # door
+            # # door
 
-            f.write(dict[j] + "temperature_22>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "s22222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
