@@ -49,7 +49,7 @@ class Model(nn.Module):
         #self.linear = nn.Linear(n_hidden, 2)
 
         #self.lstm = nn.LSTM(n_input, n_hidden, batch_first=True, bidirectional=False)
-        self.linear = nn.Linear(n_input,self.pred_len*2)
+        self.linear = nn.Linear(n_input*self.seq_len,self.pred_len*2)
 
 
     def forward(self, x):
@@ -61,11 +61,12 @@ class Model(nn.Module):
         #cnn_output = cnn_output.view(-1, 1, n_input)
         cnn_output = cnn_output.view(-1,self.seq_len,n_input)
         residuals = x + self.weight * cnn_output
-
+        residuals = residuals.reshape(-1,self.seq_len*n_input)
+        #print(residuals.shape,"======================")
         #_, (h_n, _)  = self.lstm(x)
         #_, (h_n, _)  = self.lstm(residuals)
-        #y_hat = self.linear(h_n[-1,:,:])
         y_hat = self.linear(residuals)
+        #print(y_hat.shape,"###################")
         return y_hat.view(-1,self.pred_len,2)
 
 

@@ -285,8 +285,8 @@ class Exp_Main(Exp_Basic):
                 #outputs = outputs[:, -self.args.pred_len, f_dim:]
                 #batch_y = batch_y[:, -self.args.pred_len, f_dim:].to(self.device)
                 # 改========================
-                outputs = outputs[:, -self.args.pred_len:-20, f_dim:]
-                batch_y = batch_y[:, -self.args.pred_len:-20, f_dim:].to(self.device)
+                outputs = outputs[:, -self.args.pred_len:-30, f_dim:]
+                batch_y = batch_y[:, -self.args.pred_len:-30, f_dim:].to(self.device)
                 loss = criterion(outputs, batch_y)
                 train_loss.append(loss.item())
 

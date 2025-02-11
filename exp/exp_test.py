@@ -428,15 +428,15 @@ class Exp_Main(Exp_Basic):
                     #pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
                     #true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     #=========改
-                    pred = outputs[:, -30, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -30, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    pred = outputs[:, -25, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -25, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     # 顶棚温度
                 
                     #pre_t = outputs[:, -1, -1]
                     #true_t = batch_y[:, -1, -1].to(self.device)
                     #========
-                    pre_t = outputs[:, -30, -1]
-                    true_t = batch_y[:, -30, -1].to(self.device)
+                    pre_t = outputs[:, -25, -1]
+                    true_t = batch_y[:, -25, -1].to(self.device)
                     
                     # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
