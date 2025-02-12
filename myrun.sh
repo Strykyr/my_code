@@ -1,5 +1,5 @@
 seq_len=100
-folder_path=./data2/exhaust_water/
+folder_path=./data2/door_water_6x4/
 #folder_path=./data2/door1/
 
 if [ ! -d folder_path"logs" ]; then

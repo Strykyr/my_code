@@ -36,7 +36,7 @@ def get_data(folder_path):
                 train.append(df)
             else:
                 test.append(df)
-    return train, test, train[0].index;
+    return train, test, test[0].index;
     # 获取训练数据和测试数据
 
 
@@ -513,7 +513,7 @@ class Exp_Main(Exp_Basic):
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # # door
 
-            f.write(dict[j] + "s22222new222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "s2_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
