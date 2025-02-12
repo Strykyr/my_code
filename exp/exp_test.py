@@ -100,14 +100,14 @@ def my_data(split,data):
                 # 第一个测点
                 #test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
                 #第二个测定点
-                test_seq.append([normalized_data[k,5],normalized_data[k,-1]])
+                test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
             # 10个时间点3s
             #for k in range(i+100,i+150):
             for k in range(i+100,i+150):
                 # 第一个测点
                 #test_label.append([normalized_data[k,3], normalized_data[k,-1]])
                 # 第二个
-                test_label.append([normalized_data[k,5], normalized_data[k,-1]])
+                test_label.append([normalized_data[k,10], normalized_data[k,-1]])
             test_seq = torch.FloatTensor(test_seq).reshape(-1,2)
             test_label = torch.FloatTensor(test_label).reshape(-1,2)
             seq.append((test_seq, test_label))
@@ -464,8 +464,8 @@ class Exp_Main(Exp_Basic):
             #max_val = self.test_data[j].iloc[:,3].max()
             #print(min_val,"=============",max_val)
             # 第二个测点
-            min_val = self.test_data[j].iloc[:,5].min()
-            max_val = self.test_data[j].iloc[:,5].max()
+            min_val = self.test_data[j].iloc[:,10].min()
+            max_val = self.test_data[j].iloc[:,10].max()
 
             min_val_t = self.test_data[j].iloc[:,-1].min()
             max_val_t = self.test_data[j].iloc[:,-1].max()
@@ -513,7 +513,7 @@ class Exp_Main(Exp_Basic):
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # # door
 
-            f.write(dict[j] + "s22222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "s22222new222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
