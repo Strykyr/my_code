@@ -1,5 +1,5 @@
 seq_len=100
-folder_path=./data2/door_water_6x4/
+folder_path=./data/door/
 #folder_path=./data2/door1/
 
 if [ ! -d folder_path"logs" ]; then
@@ -44,7 +44,7 @@ fi
 # done
 
 # # # Autoformer Informer Transformer , Resnet, LSTM , Attention_LSTM
-# for model_name in  LSTM Resnet
+# for model_name in  Informer
 # do
 # python -u run.py \
 #   --is_training 1 \
@@ -74,8 +74,8 @@ fi
 #   --itr 1 --learning_rate 0.005 >$folder_path'logs/'$model_name'.log'
 
 # done
-# LSTM Resnet
-for model_name in Resnet_LSTM
+# # LSTM Resnet
+for model_name in Informer
 do
 python -u test.py \
   --is_training 1 \

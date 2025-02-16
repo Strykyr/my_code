@@ -399,7 +399,7 @@ class Exp_Main(Exp_Basic):
                             outputs = self.model(batch_x)
                     elif 'Res' in self.args.model:
                             outputs = self.model(batch_x)
-                    elif 'LSTM' in self.args.model:
+                    elif 'LSTM' in self.args.model and 'Attention_LSTM' != self.args.model:
                             outputs = self.model(batch_x)
                     else:
                         if self.args.output_attention:
@@ -428,17 +428,16 @@ class Exp_Main(Exp_Basic):
                     #pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
                     #true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     #=========改
-                    pred = outputs[:, -25, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -25, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    pred = outputs[:, -28, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -28, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     # 顶棚温度
                 
                     #pre_t = outputs[:, -1, -1]
                     #true_t = batch_y[:, -1, -1].to(self.device)
                     #========
-                    pre_t = outputs[:, -25, -1]
-                    true_t = batch_y[:, -25, -1].to(self.device)
-                    
-                    # gpu转numpy
+                    pre_t = outputs[:, -28, -1]
+                    true_t = batch_y[:, -28, -1].to(self.device)
+                                        # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
                     trues_all.append(batch_y_all.detach().cpu().numpy())
 
@@ -500,7 +499,7 @@ class Exp_Main(Exp_Basic):
             # 将字典列表转换为DataFrame
             df = pd.DataFrame(data_rows)
             # 将DataFrame保存到CSV文件
-            df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior2.csv', index=False)
+            df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior22.csv', index=False)
 
             # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
             # # 将字典列表转换为DataFrame
@@ -508,12 +507,12 @@ class Exp_Main(Exp_Basic):
             # #将DataFrame保存到CSV文件
             # df.to_csv(self.folder_path + self.args.model +  '/' + dict[k] + 'ceiling.csv', index=False)
 
-            # # print('==========  mse:{}, mae:{}'.format(mse, mae))
+            # # # print('==========  mse:{}, mae:{}'.format(mse, mae))
 
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # # door
 
-            f.write(dict[j] + "s2_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "s222222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')

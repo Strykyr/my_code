@@ -181,7 +181,7 @@ class Exp_Main(Exp_Basic):
                     outputs = self.model(batch_x)
                 elif 'Res' in self.args.model:
                     outputs = self.model(batch_x)
-                elif 'LSTM' in self.args.model:
+                elif 'LSTM' in self.args.model and 'Attention_LSTM' != self.args.model:
                     outputs = self.model(batch_x)
                 else:
                     if self.args.output_attention:
@@ -269,7 +269,7 @@ class Exp_Main(Exp_Basic):
                         outputs = self.model(batch_x)
                 elif 'Res' in self.args.model:
                         outputs = self.model(batch_x)
-                elif 'LSTM' in self.args.model:
+                elif 'LSTM' in self.args.model and 'Attention_LSTM' != self.args.model:
                         outputs = self.model(batch_x)
                 else:
                     if self.args.output_attention:
@@ -429,7 +429,7 @@ class Exp_Main(Exp_Basic):
                             outputs = self.model(batch_x)
                     elif 'Res' in self.args.model:
                             outputs = self.model(batch_x)
-                    elif 'LSTM' in self.args.model:
+                    elif 'LSTM' in self.args.model and 'Attention_LSTM' != self.args.model:
                             outputs = self.model(batch_x)
                     else:
                         if self.args.output_attention:
