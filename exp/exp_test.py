@@ -62,7 +62,7 @@ def my_data(split,data):
             # 归一化
             normalized_data = scaler.fit_transform(x)
             for j in range(0,18):
-                for i in range(len(normalized_data) - 150):# 预测30s，但是label大点(100)
+                for i in range(len(normalized_data) - 160):# 预测30s，但是label大点(100)
                 #for i in range(len(normalized_data) - 190):# 预测30s，但是label大点(100)
                     # 21s => 15s   (70  => 50)
                     # 12s => 15s     (40 => 50)
@@ -73,7 +73,7 @@ def my_data(split,data):
                         # 温度加顶棚温度
                         train_seq.append([normalized_data[k,j],normalized_data[k,-1]])
                     # 未来的10个时间点3s
-                    for k in range(i+100,i+150):
+                    for k in range(i+100,i+160):
                     #for k in range(i+100,i+190):
                         train_label.append([normalized_data[k,j], normalized_data[k,-1]])
                     train_seq = torch.FloatTensor(train_seq).reshape(-1,2)
@@ -91,8 +91,8 @@ def my_data(split,data):
         x = data
         # 归一化
         normalized_data = scaler.fit_transform(x)
-        #for i in range(len(normalized_data) - 150):# 21秒
-        for i in range(len(normalized_data) - 150):
+        #for i in range(len(normalized_data) - 160):# 21秒
+        for i in range(len(normalized_data) - 160):
             test_seq = []
             test_label = []
             #for k in range(i,i+100):
@@ -102,8 +102,8 @@ def my_data(split,data):
                 #第二个测定点
                 test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
             # 10个时间点3s
-            #for k in range(i+100,i+150):
-            for k in range(i+100,i+150):
+            #for k in range(i+100,i+160):
+            for k in range(i+100,i+160):
                 # 第一个测点
                 #test_label.append([normalized_data[k,3], normalized_data[k,-1]])
                 # 第二个
@@ -428,15 +428,15 @@ class Exp_Main(Exp_Basic):
                     #pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
                     #true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     #=========改
-                    pred = outputs[:, -28, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -28, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     # 顶棚温度
                 
                     #pre_t = outputs[:, -1, -1]
                     #true_t = batch_y[:, -1, -1].to(self.device)
                     #========
-                    pre_t = outputs[:, -28, -1]
-                    true_t = batch_y[:, -28, -1].to(self.device)
+                    pre_t = outputs[:, -1, -1]
+                    true_t = batch_y[:, -1, -1].to(self.device)
                                         # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
                     trues_all.append(batch_y_all.detach().cpu().numpy())
@@ -495,11 +495,11 @@ class Exp_Main(Exp_Basic):
 
                     # 保存csv文件
             # 将数据合并成一个字典列表，每个字典代表一行数据
-            data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues, preds)]
-            # 将字典列表转换为DataFrame
-            df = pd.DataFrame(data_rows)
-            # 将DataFrame保存到CSV文件
-            df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior22.csv', index=False)
+            # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues, preds)]
+            # # 将字典列表转换为DataFrame
+            # df = pd.DataFrame(data_rows)
+            # # 将DataFrame保存到CSV文件
+            # df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior2.csv', index=False)
 
             # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
             # # 将字典列表转换为DataFrame
@@ -511,7 +511,7 @@ class Exp_Main(Exp_Basic):
 
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # # door
-
+            f.write("50个时间步长--------------------" + "  \n")
             f.write(dict[j] + "s222222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')

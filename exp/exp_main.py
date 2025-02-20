@@ -63,7 +63,7 @@ def my_data(split,data):
             # 归一化
             normalized_data = scaler.fit_transform(x)
             for j in range(0,18):
-                for i in range(len(normalized_data) - 150):# 预测30s，但是label大点(100)
+                for i in range(len(normalized_data) - 160):# 预测30s，但是label大点(100)
                 #for i in range(len(normalized_data) - 190):# 预测30s，但是label大点(100)
                     # 21s => 15s   (70  => 50)
                     # 12s => 15s     (40 => 50)
@@ -74,7 +74,7 @@ def my_data(split,data):
                         # 温度加顶棚温度
                         train_seq.append([normalized_data[k,j],normalized_data[k,-1]])
                     # 未来的10个时间点3s
-                    for k in range(i+100,i+150):
+                    for k in range(i+100,i+160):
                     #for k in range(i+100,i+190):
                         train_label.append([normalized_data[k,j], normalized_data[k,-1]])
                     train_seq = torch.FloatTensor(train_seq).reshape(-1,2)
@@ -82,7 +82,7 @@ def my_data(split,data):
                     seq.append((train_seq, train_label))
         seq = MyDataset(seq)
         # 多线程取数据集
-        seq = DataLoader(dataset=seq, batch_size=500, shuffle=True, num_workers=4, drop_last=True)
+        seq = DataLoader(dataset=seq, batch_size=200, shuffle=True, num_workers=4, drop_last=True)
         return seq
     # 测试集
     else:
@@ -92,8 +92,8 @@ def my_data(split,data):
         x = data
         # 归一化
         normalized_data = scaler.fit_transform(x)
-        #for i in range(len(normalized_data) - 150):# 21秒
-        for i in range(len(normalized_data) - 190):
+        #for i in range(len(normalized_data) - 160):# 21秒
+        for i in range(len(normalized_data) - 160):
             test_seq = []
             test_label = []
             #for k in range(i,i+100):
@@ -103,7 +103,7 @@ def my_data(split,data):
                 # 第二个测定点
                 #test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
             # 10个时间点3s
-            #for k in range(i+100,i+150):
+            #for k in range(i+100,i+160):
             for k in range(i+100,i+190):
                 # 第一个测点
                 test_label.append([normalized_data[k,3], normalized_data[k,-1]])
@@ -455,12 +455,12 @@ class Exp_Main(Exp_Basic):
                     
 
                     #温度
-                    pred = outputs[:, -25, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -25, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     
                     # 顶棚温度
-                    pre_t = outputs[:, -25, -1]
-                    true_t = batch_y[:, -25, -1].to(self.device)
+                    pre_t = outputs[:, -1, -1]
+                    true_t = batch_y[:, -1, -1].to(self.device)
  
                     # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
