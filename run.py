@@ -37,11 +37,11 @@ parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='l
 # parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
 # parser.add_argument('--label_len', type=int, default=48, help='start token length')
 # parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length')
-parser.add_argument('--seq_len', type=int, default=100, help='input sequence length')
+parser.add_argument('--seq_len', type=int, default=75, help='input sequence length')
 # labe长度就是预测一半
 parser.add_argument('--label_len', type=int, default=35, help='start token length')
 # 预测的长度
-parser.add_argument('--pred_len', type=int, default=50, help='prediction sequence length')
+parser.add_argument('--pred_len', type=int, default=25, help='prediction sequence length')
 # parser.add_argument('--label_len', type=int, default=45, help='start token length')
 # # 预测的长度
 # parser.add_argument('--pred_len', type=int, default=90, help='prediction sequence length')
@@ -97,7 +97,7 @@ parser.add_argument('--use_amp', action='store_true', help='use automatic mixed 
 parser.add_argument('--use_gpu', type=bool, default=True, help='use gpu')
 # 指定gpu，得改
 #parser.add_argument('--gpu', type=int, default=0, help='gpu')
-parser.add_argument('--gpu', type=int, default=1, help='gpu')
+parser.add_argument('--gpu', type=int, default=0, help='gpu')
 parser.add_argument('--use_multi_gpu', action='store_true', help='use multiple gpus', default=False)
 parser.add_argument('--devices', type=str, default='0,1,2,3', help='device ids of multile gpus')
 parser.add_argument('--test_flop', action='store_true', default=False, help='See utils/tools for usage')

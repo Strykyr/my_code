@@ -44,7 +44,7 @@ fi
 # done
 
 # # # Autoformer Informer Transformer , Resnet, LSTM , Attention_LSTM
-# for model_name in  Transformer
+# for model_name in  Resnet_LSTM
 # do
 # python -u run.py \
 #   --is_training 1 \

@@ -37,14 +37,14 @@ parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='l
 # parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
 # parser.add_argument('--label_len', type=int, default=48, help='start token length')
 # parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length')
-parser.add_argument('--seq_len', type=int, default=100, help='input sequence length')
+parser.add_argument('--seq_len', type=int, default=75, help='input sequence length')
 # labe长度就是预测一半
 # parser.add_argument('--label_len', type=int, default=25, help='start token length')
 # # 预测的长度
 # parser.add_argument('--pred_len', type=int, default=50, help='prediction sequence length')
 parser.add_argument('--label_len', type=int, default=30, help='start token length')
 # 预测的长度
-parser.add_argument('--pred_len', type=int, default=50, help='prediction sequence length')
+parser.add_argument('--pred_len', type=int, default=25, help='prediction sequence length')
 
 
 

@@ -62,18 +62,18 @@ def my_data(split,data):
             # 归一化
             normalized_data = scaler.fit_transform(x)
             for j in range(0,18):
-                for i in range(len(normalized_data) - 160):# 预测30s，但是label大点(100)
+                for i in range(len(normalized_data) - 100):# 预测30s，但是label大点(100)
                 #for i in range(len(normalized_data) - 190):# 预测30s，但是label大点(100)
                     # 21s => 15s   (70  => 50)
                     # 12s => 15s     (40 => 50)
                     train_seq,train_label = [],[]
                     #for k in range(i,i+100):
-                    for k in range(i,i+100):
+                    for k in range(i,i+75):
                         #train_seq.append([normalized_data[k,j],normalized_data[k,j+18]])
                         # 温度加顶棚温度
                         train_seq.append([normalized_data[k,j],normalized_data[k,-1]])
                     # 未来的10个时间点3s
-                    for k in range(i+100,i+160):
+                    for k in range(i+75,i+100):
                     #for k in range(i+100,i+190):
                         train_label.append([normalized_data[k,j], normalized_data[k,-1]])
                     train_seq = torch.FloatTensor(train_seq).reshape(-1,2)
@@ -92,22 +92,22 @@ def my_data(split,data):
         # 归一化
         normalized_data = scaler.fit_transform(x)
         #for i in range(len(normalized_data) - 160):# 21秒
-        for i in range(len(normalized_data) - 160):
+        for i in range(len(normalized_data) - 100):
             test_seq = []
             test_label = []
             #for k in range(i,i+100):
-            for k in range(i,i+100):
+            for k in range(i,i+75):
                 # 第一个测点
-                #test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
+                test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
                 #第二个测定点
-                test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
+                #test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
             # 10个时间点3s
             #for k in range(i+100,i+160):
-            for k in range(i+100,i+160):
+            for k in range(i+75,i+100):
                 # 第一个测点
-                #test_label.append([normalized_data[k,3], normalized_data[k,-1]])
+                test_label.append([normalized_data[k,3], normalized_data[k,-1]])
                 # 第二个
-                test_label.append([normalized_data[k,10], normalized_data[k,-1]])
+                #test_label.append([normalized_data[k,10], normalized_data[k,-1]])
             test_seq = torch.FloatTensor(test_seq).reshape(-1,2)
             test_label = torch.FloatTensor(test_label).reshape(-1,2)
             seq.append((test_seq, test_label))
@@ -459,12 +459,12 @@ class Exp_Main(Exp_Basic):
                 exit()
             # 画图
             # 第一个测点
-            #min_val = self.test_data[j].iloc[:,3].min()
-            #max_val = self.test_data[j].iloc[:,3].max()
+            min_val = self.test_data[j].iloc[:,3].min()
+            max_val = self.test_data[j].iloc[:,3].max()
             #print(min_val,"=============",max_val)
             # 第二个测点
-            min_val = self.test_data[j].iloc[:,10].min()
-            max_val = self.test_data[j].iloc[:,10].max()
+            #min_val = self.test_data[j].iloc[:,10].min()
+            #max_val = self.test_data[j].iloc[:,10].max()
 
             min_val_t = self.test_data[j].iloc[:,-1].min()
             max_val_t = self.test_data[j].iloc[:,-1].max()
@@ -495,31 +495,31 @@ class Exp_Main(Exp_Basic):
 
                     # 保存csv文件
             # 将数据合并成一个字典列表，每个字典代表一行数据
-            # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues, preds)]
-            # # 将字典列表转换为DataFrame
-            # df = pd.DataFrame(data_rows)
-            # # 将DataFrame保存到CSV文件
-            # df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior2.csv', index=False)
+            data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues, preds)]
+            # 将字典列表转换为DataFrame
+            df = pd.DataFrame(data_rows)
+            # 将DataFrame保存到CSV文件
+            df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior1.csv', index=False)
 
-            # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
-            # # 将字典列表转换为DataFrame
-            # df = pd.DataFrame(data_rows)
-            # #将DataFrame保存到CSV文件
-            # df.to_csv(self.folder_path + self.args.model +  '/' + dict[k] + 'ceiling.csv', index=False)
+            data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
+            # 将字典列表转换为DataFrame
+            df = pd.DataFrame(data_rows)
+            #将DataFrame保存到CSV文件
+            df.to_csv(self.folder_path + self.args.model +  '/' + dict[k] + 'ceiling.csv', index=False)
 
             # # # print('==========  mse:{}, mae:{}'.format(mse, mae))
 
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # # door
-            f.write("50个时间步长--------------------" + "  \n")
-            f.write(dict[j] + "s222222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            #f.write("50个时间步长--------------------" + "  \n")
+            f.write(dict[j] + "s1_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
-            # f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
-            # f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
-            # f.write('\n')
-            # f.write('\n')
+            f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
+            f.write('\n')
+            f.write('\n')
             f.close()
 
         return
