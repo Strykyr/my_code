@@ -1,5 +1,5 @@
 from exp.exp_basic import Exp_Basic
-from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,Attention_LSTM
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -133,7 +133,7 @@ class Exp_Main(Exp_Basic):
         model_dict = {
             'Autoformer': Autoformer,
             'Transformer': Transformer,
-            'Attention_LSTM': Attention_LSTM,
+            'Attention_LSTM': Attention,
             'Informer': Informer,
             'DLinear': DLinear,
             'NLinear': NLinear,

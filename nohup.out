@@ -328,3 +328,65 @@ Traceback (most recent call last):
   File "/home/surb21/1/my-newcode/exp/exp_main.py", line 109, in my_data
     test_label.append([normalized_data[k,3], normalized_data[k,-1]])
 IndexError: index 2001 is out of bounds for axis 0 with size 2001
+Traceback (most recent call last):
+  File "test1.py", line 148, in <module>
+    exp.test(setting,test = 1)
+  File "/home/surb21/1/my-newcode/exp/exp_test1.py", line 353, in test
+    self.model.load_state_dict(torch.load(os.path.join(self.folder_path + self.args.model + '/checkpoints/', 'checkpoint.pth')))
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 594, in load
+    with _open_file_like(f, 'rb') as opened_file:
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 230, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 211, in __init__
+    super(_open_file, self).__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: './data/door/Attention_LSTM/checkpoints/checkpoint.pth'
+Traceback (most recent call last):
+  File "run2.py", line 143, in <module>
+    exp.train(setting)
+  File "/home/surb21/1/my-newcode/exp/exp_main2.py", line 276, in train
+    outputs = self.model(batch_x)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/surb21/1/my-newcode/models/Resnet_LSTM.py", line 63, in forward
+    residuals = x + self.weight * cnn_output
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
+Traceback (most recent call last):
+  File "run2.py", line 143, in <module>
+    exp.train(setting)
+  File "/home/surb21/1/my-newcode/exp/exp_main2.py", line 276, in train
+    outputs = self.model(batch_x)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/surb21/1/my-newcode/models/Resnet_LSTM.py", line 63, in forward
+    residuals = x + self.weight * cnn_output
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
+Traceback (most recent call last):
+  File "run2.py", line 143, in <module>
+    exp.train(setting)
+  File "/home/surb21/1/my-newcode/exp/exp_main2.py", line 278, in train
+    outputs = self.model(batch_x)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/surb21/1/my-newcode/models/CNN_LSTM.py", line 60, in forward
+    cnn_output = self.cnn(x2)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/container.py", line 139, in forward
+    input = module(input)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py", line 167, in forward
+    return F.batch_norm(
+  File "/data1/surb21/conda/envs/t2/lib/python3.8/site-packages/torch/nn/functional.py", line 2281, in batch_norm
+    return torch.batch_norm(
+RuntimeError: running_mean should contain 512 elements not 2048
+Traceback (most recent call last):
+  File "run2.py", line 141, in <module>
+    exp = Exp(args)  # set experiments
+  File "/home/surb21/1/my-newcode/exp/exp_main2.py", line 132, in __init__
+    super(Exp_Main, self).__init__(args)
+  File "/home/surb21/1/my-newcode/exp/exp_basic.py", line 10, in __init__
+    self.model = self._build_model().to(self.device)
+  File "/home/surb21/1/my-newcode/exp/exp_main2.py", line 151, in _build_model
+    model = model_dict[self.args.model].Model(self.args).float()
+KeyError: 'Resbet_LSTM'

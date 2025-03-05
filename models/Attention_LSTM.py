@@ -388,10 +388,15 @@ class Model(nn.Module):
 
         #============= 改
         #self.xLT=sLSTM(input_size=configs.enc_in,hidden_size=configs.enc_in,num_layers=1)
-        self.LSTM = nn.LSTM(input_size=configs.c_out,hidden_size=configs.c_out,num_layers=1)
-        self.lstm_proj = nn.Linear(configs.c_out, configs.c_out, bias=True)
-
-        self.proj = nn.Linear(configs.d_model, configs.c_out, bias=True)
+        #==========是64之前的
+        #self.LSTM = nn.LSTM(input_size=configs.c_out,hidden_size=128,batch_first=True, bidirectional=False)
+        #self.LSTM = nn.LSTM(input_size=configs.c_out,hidden_size=64,batch_first=True,bidirectional=False)
+        # 训练不加batch，测试加batch
+        self.LSTM = nn.LSTM(input_size=configs.c_out,hidden_size=64,bidirectional=False)
+        #self.LSTM = nn.LSTM(configs.c_out, 64, batch_first=True, bidirectional=False)
+        #self.lstm_proj = nn.Linear(64,configs.c_out)
+        #self.lstm_proj = nn.Linear(configs.c_out, configs.c_out)
+        self.proj = nn.Linear(64, configs.c_out)
         
         # Embedding
         if configs.embed_type == 0:
@@ -433,7 +438,8 @@ class Model(nn.Module):
                     activation=configs.activation
                 ) for l in range(configs.e_layers)
             ],
-            norm_layer=torch.nn.LayerNorm(configs.d_model)
+            norm_layer=torch.nn.LayerNorm(configs.d_model),
+            projection=nn.Linear(configs.d_model, configs.c_out, bias=True)
         )
         # Decoder
         self.decoder = Decoder(
@@ -460,13 +466,13 @@ class Model(nn.Module):
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
 
         #======== 改    
-        x_enc, hidden_state = self.LSTM(x_enc)
+       
 
 
         enc_out = self.enc_embedding(x_enc, x_mark_enc)
         enc_out, attns = self.encoder(enc_out, attn_mask=enc_self_mask)
 
-        
+        enc_out, hidden_state = self.LSTM(enc_out)
         # ======================  自己改
         dec_out = self.proj(enc_out)
 
