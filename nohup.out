@@ -390,3 +390,7 @@ Traceback (most recent call last):
   File "/home/surb21/1/my-newcode/exp/exp_main2.py", line 151, in _build_model
     model = model_dict[self.args.model].Model(self.args).float()
 KeyError: 'Resbet_LSTM'
+Traceback (most recent call last):
+  File "/home/surb21/1/my-newcode/run2.py", line 3, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'

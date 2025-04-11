@@ -1,5 +1,5 @@
 from exp.exp_basic import Exp_Basic
-from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -101,16 +101,16 @@ def my_data(split,data):
             #for k in range(i,i+100):
             for k in range(i,i+seq_len):
                 # 第一个测点
-                #test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
+                test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
                 #第二个测定点
-                test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
+                #test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
             # 10个时间点3s
             #for k in range(i+100,i+160):
             for k in range(i+seq_len,i + pre_len + seq_len):
                 # 第一个测点
-                #test_label.append([normalized_data[k,3], normalized_data[k,-1]])
+                test_label.append([normalized_data[k,3], normalized_data[k,-1]])
                 # 第二个
-                test_label.append([normalized_data[k,10], normalized_data[k,-1]])
+                #test_label.append([normalized_data[k,10], normalized_data[k,-1]])
             test_seq = torch.FloatTensor(test_seq).reshape(-1,2)
             test_label = torch.FloatTensor(test_label).reshape(-1,2)
             seq.append((test_seq, test_label))
@@ -136,7 +136,7 @@ class Exp_Main(Exp_Basic):
         model_dict = {
             'Autoformer': Autoformer,
             'Transformer': Transformer,
-            'Attention_LSTM': Attention,
+            'Attention_LSTM': Attention_LSTM,
             'Informer': Informer,
             'DLinear': DLinear,
             'NLinear': NLinear,
@@ -463,12 +463,12 @@ class Exp_Main(Exp_Basic):
                 exit()
             # 画图
             # 第一个测点
-            #min_val = self.test_data[j].iloc[:,3].min()
-            #max_val = self.test_data[j].iloc[:,3].max()
+            min_val = self.test_data[j].iloc[:,3].min()
+            max_val = self.test_data[j].iloc[:,3].max()
             #print(min_val,"=============",max_val)
             # 第二个测点
-            min_val = self.test_data[j].iloc[:,10].min()
-            max_val = self.test_data[j].iloc[:,10].max()
+            #min_val = self.test_data[j].iloc[:,10].min()
+            #max_val = self.test_data[j].iloc[:,10].max()
 
             min_val_t = self.test_data[j].iloc[:,-1].min()
             max_val_t = self.test_data[j].iloc[:,-1].max()
@@ -516,14 +516,14 @@ class Exp_Main(Exp_Basic):
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # # door
             #f.write("50个时间步长--------------------" + "  \n")
-            f.write(dict[j] + "s22222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "s1_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
-            # f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
-            # f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
-            # f.write('\n')
-            # f.write('\n')
+            f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
+            f.write('\n')
+            f.write('\n')
             f.close()
 
         return

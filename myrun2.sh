@@ -45,7 +45,7 @@ fi
 # done
 
 # # # Autoformer Informer Transformer , Resnet, LSTM , Attention_LSTM
-# for model_name in  Resnet_LSTM
+# for model_name in  Attention_LSTM
 # do
 # python -u run2.py \
 #   --is_training 1 \
@@ -75,8 +75,8 @@ fi
 #   --itr 1 --learning_rate 0.005 >$folder_path'logs/'$model_name'.log'
 
 # done
-# # LSTM Resnet
-for model_name in LSTM CNN_LSTM Linear NLinear Resnet 
+# LSTM Resnet
+for model_name in Attention_LSTM
 do
 python -u test2.py \
   --is_training 1 \
