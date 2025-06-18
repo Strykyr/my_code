@@ -53,7 +53,7 @@ class MyDataset(Dataset):
         return len(self.data)
 
 seq_len = 100
-pre_len = 90
+pre_len = 30
 
 def my_data(split,data):
 
@@ -86,7 +86,7 @@ def my_data(split,data):
                     seq.append((train_seq, train_label))
         seq = MyDataset(seq)
         # 多线程取数据集
-        seq = DataLoader(dataset=seq, batch_size=200, shuffle=True, num_workers=4, drop_last=True)
+        seq = DataLoader(dataset=seq, batch_size=400, shuffle=True, num_workers=4, drop_last=True)
         return seq
     # 测试集
     else:
@@ -461,12 +461,12 @@ class Exp_Main(Exp_Basic):
                     
 
                     #温度
-                    pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    pred = outputs[:, -5, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -5, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     
                     # 顶棚温度
-                    pre_t = outputs[:, -1, -1]
-                    true_t = batch_y[:, -1, -1].to(self.device)
+                    pre_t = outputs[:, -5, -1]
+                    true_t = batch_y[:, -5, -1].to(self.device)
  
                     # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
@@ -540,7 +540,7 @@ class Exp_Main(Exp_Basic):
             # door
             f.write(dict[j] + "tmperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+"\n")
-            f.write(str(dict[k]) + "门口temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(str(dict[k]) + "s1temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write(str(dict[k]) + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")

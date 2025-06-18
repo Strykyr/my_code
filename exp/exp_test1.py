@@ -52,7 +52,7 @@ class MyDataset(Dataset):
         return len(self.data)
     
 
-seq_len = 40
+seq_len = 100
 pre_len = 30
 
 def my_data(split,data):

@@ -43,8 +43,8 @@ fi
 
 # done
 
-# # # # # Autoformer Informer Transformer , Resnet, LSTM , Attention_LSTM
-# for model_name in  BILSTM
+# # # # # Linear lstm bilstm dlinear Attention Attention_LSTM
+# for model_name in DLinear
 # do
 # python -u run1.py \
 #   --is_training 1 \
@@ -75,7 +75,7 @@ fi
 
 # done
 # # LSTM Resnet
-for model_name in Attention_LSTM
+for model_name in DLinear
 do
 python -u test1.py \
   --is_training 1 \
