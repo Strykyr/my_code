@@ -31,16 +31,16 @@ fi
 
 #NLinear
 
-# for model_name in NLinear
-# do
-# python -u run2.py \
-#   --is_training 1 \
-#   --model_id ETTh1_$seq_len'_'96 \
-#   --model $model_name \
-#   --folder_path $folder_path \
-#   --features M \
-#   --des 'Exp' \
-#   --itr 1 --learning_rate 0.005 >$folder_path'logs/'$model_name'.log'
+for model_name in My_Attention Linear NLinear DLinear LSTM CNN_LSTM
+do
+python -u run2.py \
+  --is_training 1 \
+  --model_id ETTh1_$seq_len'_'96 \
+  --model $model_name \
+  --folder_path $folder_path \
+  --features M \
+  --des 'Exp' \
+  --itr 1 --learning_rate 0.005 >$folder_path'logs/'$model_name'.log'
 
 # done
 
@@ -76,17 +76,17 @@ fi
 
 # done
 # LSTM Resnet
-for model_name in Attention_LSTM
-do
-python -u test2.py \
-  --is_training 1 \
-  --model_id exchange_96_$pred_len \
-  --model $model_name \
-  --features M \
-  --folder_path $folder_path \
-  --e_layers 2 \
-  --d_layers 1 \
-  --factor 3 \
-  --des 'Exp' \
-  --itr 1 >$folder_path'logs/'$model_name'.log'
-done
+# for model_name in Attention_LSTM
+# do
+# python -u test2.py \
+#   --is_training 1 \
+#   --model_id exchange_96_$pred_len \
+#   --model $model_name \
+#   --features M \
+#   --folder_path $folder_path \
+#   --e_layers 2 \
+#   --d_layers 1 \
+#   --factor 3 \
+#   --des 'Exp' \
+#   --itr 1 >$folder_path'logs/'$model_name'.log'
+# done

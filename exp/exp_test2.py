@@ -1,5 +1,5 @@
 from exp.exp_basic import Exp_Basic
-from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -52,7 +52,7 @@ class MyDataset(Dataset):
         return len(self.data)
        
 seq_len = 100
-pre_len = 50
+pre_len = 30
 
 def my_data(split,data):
 
@@ -144,7 +144,8 @@ class Exp_Main(Exp_Basic):
             'Resnet_LSTM': Resnet_LSTM,
             'Resnet': Resnet,
             'LSTM': LSTM,
-            'CNN_LSTM':CNN_LSTM
+            'CNN_LSTM':CNN_LSTM,
+            'My_Attention':My_Attention
         }
         model = model_dict[self.args.model].Model(self.args).float()
 
@@ -432,15 +433,15 @@ class Exp_Main(Exp_Basic):
                     #pred = outputs[:, -1, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
                     #true = batch_y[:, -1, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     #=========改
-                    pred = outputs[:, -25, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
-                    true = batch_y[:, -25, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
+                    pred = outputs[:, -5, 0]  # outputs.detach().cpu().numpy()  # .squeeze()
+                    true = batch_y[:, -5, 0].to(self.device)  # batch_y.detach().cpu().numpy()  # .squeeze()
                     # 顶棚温度
                 
                     #pre_t = outputs[:, -1, -1]
                     #true_t = batch_y[:, -1, -1].to(self.device)
                     #========
-                    pre_t = outputs[:, -25, -1]
-                    true_t = batch_y[:, -25, -1].to(self.device)
+                    pre_t = outputs[:, -5, -1]
+                    true_t = batch_y[:, -5, -1].to(self.device)
                                         # gpu转numpy
                     preds_all.append(outputs_all.detach().cpu().numpy())
                     trues_all.append(batch_y_all.detach().cpu().numpy())
