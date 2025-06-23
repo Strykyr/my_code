@@ -86,7 +86,7 @@ def my_data(split,data):
                     seq.append((train_seq, train_label))
         seq = MyDataset(seq)
         # 多线程取数据集
-        seq = DataLoader(dataset=seq, batch_size=200, shuffle=True, num_workers=4, drop_last=True)
+        seq = DataLoader(dataset=seq, batch_size=500, shuffle=True, num_workers=4, drop_last=True)
         return seq
     # 测试集
     else:
@@ -540,7 +540,7 @@ class Exp_Main(Exp_Basic):
             # door
             f.write(dict[j] + "tmperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+"\n")
-            f.write(str(dict[k]) + "门口temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(str(dict[k]) + "s111temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write(str(dict[k]) + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")

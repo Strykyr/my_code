@@ -43,7 +43,7 @@ parser.add_argument('--label_len', type=int, default=25, help='start token lengt
 # 预测的长度
 parser.add_argument('--pred_len', type=int, default=30, help='prediction sequence length')
 
-parser.add_argument('--task_name', type=int, default='long_term_forecast', help='prediction sequence length')
+parser.add_argument('--task_name', type=str, default='long_term_forecast', help='prediction sequence length')
 # parser.add_argument('--label_len', type=int, default=45, help='start token length')
 # # 预测的长度
 # parser.add_argument('--pred_len', type=int, default=90, help='prediction sequence length')
@@ -84,7 +84,7 @@ parser.add_argument('--do_predict', action='store_true', help='whether to predic
 # linux多线程工作
 parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
 parser.add_argument('--itr', type=int, default=2, help='experiments times')
-parser.add_argument('--train_epochs', type=int, default=20, help='train epochs')
+parser.add_argument('--train_epochs', type=int, default=25, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
 #parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
 # 5个epoches不下降停止训练
