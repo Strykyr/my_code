@@ -1,5 +1,6 @@
 from exp.exp_basic import Exp_Basic
-from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,My_ModelD
+
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -52,7 +53,7 @@ class MyDataset(Dataset):
         return len(self.data)
        
 seq_len = 100
-pre_len = 30
+pre_len = 90
 
 def my_data(split,data):
 
@@ -145,7 +146,10 @@ class Exp_Main(Exp_Basic):
             'Resnet': Resnet,
             'LSTM': LSTM,
             'CNN_LSTM':CNN_LSTM,
-            'My_Attention':My_Attention
+            'My_Attention':My_Attention,
+            'My_Model': My_Model,
+            'Attention': Attention,
+            'My_ModelD': My_ModelD
         }
         model = model_dict[self.args.model].Model(self.args).float()
 
@@ -181,7 +185,7 @@ class Exp_Main(Exp_Basic):
                 dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
                 dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
                 # encoder - decoder
-                if 'Linear' in self.args.model:
+                if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                     outputs = self.model(batch_x)
                 else:
                     if self.args.output_attention:
@@ -262,7 +266,7 @@ class Exp_Main(Exp_Basic):
                 #         loss = criterion(outputs, batch_y)
                 #         train_loss.append(loss.item())
                 # else:
-                if 'Linear' in self.args.model:
+                if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                         outputs = self.model(batch_x)
                 elif 'Res' in self.args.model:
                             outputs = self.model(batch_x)
@@ -400,7 +404,7 @@ class Exp_Main(Exp_Basic):
                     #             else:
                     #                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                     # else:
-                    if 'Linear' in self.args.model:
+                    if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                             outputs = self.model(batch_x)
                     elif 'Res' in self.args.model:
                             outputs = self.model(batch_x)
@@ -500,11 +504,11 @@ class Exp_Main(Exp_Basic):
 
                     # 保存csv文件
             # 将数据合并成一个字典列表，每个字典代表一行数据
-            # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues, preds)]
-            # # 将字典列表转换为DataFrame
-            # df = pd.DataFrame(data_rows)
-            # # 将DataFrame保存到CSV文件
-            # df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior1.csv', index=False)
+            data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues, preds)]
+            # 将字典列表转换为DataFrame
+            df = pd.DataFrame(data_rows)
+            # 将DataFrame保存到CSV文件
+            df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior2.csv', index=False)
 
             # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
             # # 将字典列表转换为DataFrame
@@ -553,7 +557,7 @@ class Exp_Main(Exp_Basic):
                 # encoder - decoder
                 if self.args.use_amp:
                     with torch.cuda.amp.autocast():
-                        if 'Linear' in self.args.model:
+                        if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                             outputs = self.model(batch_x)
                         else:
                             if self.args.output_attention:
@@ -561,7 +565,7 @@ class Exp_Main(Exp_Basic):
                             else:
                                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                 else:
-                    if 'Linear' in self.args.model:
+                    if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                         outputs = self.model(batch_x)
                     else:
                         if self.args.output_attention:

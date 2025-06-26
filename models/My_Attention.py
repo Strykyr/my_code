@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from layers_my.Transformer_EncDec import Encoder, EncoderLayer
+from layers_my.Transformer_EncDec import Encoder, EncoderLayer,DecoderLayer, ConvLayer
 from layers_my.SelfAttention_Family import FullAttention, AttentionLayer
 from layers_my.Embed import PatchEmbedding
 
@@ -18,7 +18,6 @@ class FlattenHead(nn.Module):
         x = self.linear(x)
         x = self.dropout(x)
         return x
-
 
 class Model(nn.Module):
     """

@@ -446,3 +446,63 @@ Traceback (most recent call last):
   File "/data1/surb21/my_code/layers/SelfAttention_Family.py", line 41, in forward
     return (V.contiguous(), None)
 RuntimeError: CUDA out of memory. Tried to allocate 80.00 MiB (GPU 2; 23.69 GiB total capacity; 3.15 GiB already allocated; 27.00 MiB free; 3.30 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "run2.py", line 4, in <module>
+    from exp.exp_main2 import Exp_Main
+  File "/data2/surb21/1/my_code/exp/exp_main2.py", line 3, in <module>
+    from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention
+  File "/data2/surb21/1/my_code/models/My_Attention.py", line 21, in <module>
+    layers_my
+NameError: name 'layers_my' is not defined
+Traceback (most recent call last):
+  File "run2.py", line 160, in <module>
+    exp = Exp(args)  # set experiments
+  File "/data2/surb21/1/my_code/exp/exp_main2.py", line 152, in __init__
+    super(Exp_Main, self).__init__(args)
+  File "/data2/surb21/1/my_code/exp/exp_basic.py", line 10, in __init__
+    self.model = self._build_model().to(self.device)
+  File "/data2/surb21/1/my_code/exp/exp_main2.py", line 173, in _build_model
+    model = model_dict[self.args.model].Model(self.args).float()
+KeyError: 'Attention'
+Traceback (most recent call last):
+  File "test2.py", line 4, in <module>
+    from exp.exp_test2 import Exp_Main
+  File "/data2/surb21/1/my_code/exp/exp_test2.py", line 2
+    from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,
+                       ^
+SyntaxError: trailing comma not allowed without surrounding parentheses
+Traceback (most recent call last):
+  File "test2.py", line 4, in <module>
+    from exp.exp_test2 import Exp_Main
+  File "/data2/surb21/1/my_code/exp/exp_test2.py", line 2
+    from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,
+                       ^
+SyntaxError: trailing comma not allowed without surrounding parentheses
+Traceback (most recent call last):
+  File "test2.py", line 4, in <module>
+    from exp.exp_test2 import Exp_Main
+  File "/data2/surb21/1/my_code/exp/exp_test2.py", line 2
+    from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,
+                       ^
+SyntaxError: trailing comma not allowed without surrounding parentheses
+Traceback (most recent call last):
+  File "test2.py", line 4, in <module>
+    from exp.exp_test2 import Exp_Main
+  File "/data2/surb21/1/my_code/exp/exp_test2.py", line 2
+    from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,
+                       ^
+SyntaxError: trailing comma not allowed without surrounding parentheses
+Traceback (most recent call last):
+  File "test2.py", line 4, in <module>
+    from exp.exp_test2 import Exp_Main
+  File "/data2/surb21/1/my_code/exp/exp_test2.py", line 2
+    from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,
+                       ^
+SyntaxError: trailing comma not allowed without surrounding parentheses
+Traceback (most recent call last):
+  File "test2.py", line 4, in <module>
+    from exp.exp_test2 import Exp_Main
+  File "/data2/surb21/1/my_code/exp/exp_test2.py", line 2
+    from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,
+                       ^
+SyntaxError: trailing comma not allowed without surrounding parentheses

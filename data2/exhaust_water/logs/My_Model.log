@@ -1,0 +1,15 @@
+Args in experiment:
+Namespace(activation='gelu', affine=0, batch_size=32, c_out=2, checkpoints='./checkpoints/', d_ff=256, d_layers=1, d_model=128, data='ETTm1', data_path='ETTh1.csv', dec_in=2, decomposition=0, des='Exp', devices='0,1,2,3', distil=True, do_predict=False, dropout=0.2, e_layers=3, embed='timeF', embed_type=3, enc_in=2, factor=3, fc_dropout=0.2, features='M', folder_path='./data2/exhaust_water/', freq='h', gpu=0, head_dropout=0.0, individual=0, is_training=1, itr=1, kernel_size=25, label_len=25, learning_rate=0.0001, loss='mse', lradj='type1', model='My_Model', model_id='exchange_96_', moving_avg=25, n_heads=16, num_workers=10, output_attention=False, padding_patch='end', patch_len=16, patience=5, pred_len=30, revin=1, root_path='./data/ETT/', seq_len=100, stride=8, subtract_last=0, target='OT', task_name='long_term_forecast', test_flop=False, train_epochs=15, train_only=False, use_amp=False, use_gpu=True, use_multi_gpu=False)
+Use GPU: cuda:0
+train len >>>>>>>>  18
+test len >>>>>>>>  9
+loading model
+19.99982388 ###### 842.7396128
+19.99982388 ###### 842.7396128
+19.99982388 ###### 907.5347808
+19.99982388 ###### 729.7779187999997
+19.99982388 ###### 822.0271259999997
+19.99982388 ###### 822.0271259999997
+19.99982388 ###### 741.6805644
+19.99982388 ###### 741.6805644
+19.99982388 ###### 822.0271259999997

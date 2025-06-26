@@ -1,6 +1,6 @@
 #from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,My_ModelD
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -17,6 +17,26 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 warnings.filterwarnings('ignore')
+
+
+#  ==  加权均方误差损失函数，减少滞后性
+# class WeightedMSELoss(nn.Module):
+#     def __init__(self, eps=1e-6):
+#         super(WeightedMSELoss, self).__init__()
+#         self.eps = eps
+
+#     def forward(self, pred, target):
+#         # pred, target 形状 [batch_size, seq_len]
+#         delta = torch.abs(target[:, 1:] - target[:, :-1])  # 计算变化率
+#         delta = torch.cat([delta, delta[:, -1:]], dim=1)   # 补齐长度
+
+#         # 归一化权重
+#         weight = delta / (delta.max(dim=1, keepdim=True)[0] + self.eps)
+
+#         # 计算加权 MSE
+#         loss = weight * (pred - target) ** 2
+#         return loss.mean()
+
 
 
 
@@ -53,7 +73,7 @@ class MyDataset(Dataset):
         return len(self.data)
 
 seq_len = 100
-pre_len = 30
+pre_len = 90
 
 def my_data(split,data):
 
@@ -86,7 +106,7 @@ def my_data(split,data):
                     seq.append((train_seq, train_label))
         seq = MyDataset(seq)
         # 多线程取数据集
-        seq = DataLoader(dataset=seq, batch_size=500, shuffle=True, num_workers=4, drop_last=True)
+        seq = DataLoader(dataset=seq, batch_size=600, shuffle=True, num_workers=4, drop_last=True)
         return seq
     # 测试集
     else:
@@ -147,7 +167,10 @@ class Exp_Main(Exp_Basic):
             'LSTM': LSTM,
             'Attention_LSTM':Attention_LSTM,
             'CNN_LSTM':CNN_LSTM,
-            'My_Attention':My_Attention
+            'My_Attention':My_Attention,
+            'My_Model': My_Model,
+            'Attention': Attention,
+            'My_ModelD' : My_ModelD,
         }
         model = model_dict[self.args.model].Model(self.args).float()
         #print(model) #=============================================
@@ -165,6 +188,9 @@ class Exp_Main(Exp_Basic):
 
     def _select_criterion(self):
         criterion = nn.MSELoss()
+        
+        #===================
+        #criterion = WeightedMSELoss()
         return criterion
 
     def vali(self, vali_data, vali_loader, criterion):
@@ -183,7 +209,8 @@ class Exp_Main(Exp_Basic):
                 dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
                 dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
                 # encoder - decoder
-                if 'Linear' in self.args.model:
+                #if 'Linear' in self.args.model or 'Model' in self.args.model:
+                if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                     outputs = self.model(batch_x)
                 elif 'Res' in self.args.model:
                     outputs = self.model(batch_x)
@@ -271,7 +298,8 @@ class Exp_Main(Exp_Basic):
                 #         loss = criterion(outputs, batch_y)
                 #         train_loss.append(loss.item())
                 # else:
-                if 'Linear' in self.args.model:
+                #if 'Linear' in self.args.model or 'Model' in self.args.model:
+                if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                         outputs = self.model(batch_x)
                 elif 'Res' in self.args.model:
                         outputs = self.model(batch_x)
@@ -431,7 +459,8 @@ class Exp_Main(Exp_Basic):
                     #             else:
                     #                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                     # else:
-                    if 'Linear' in self.args.model:
+                    #if 'Linear' in self.args.model or 'Model' in self.args.model:
+                    if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                             outputs = self.model(batch_x)
                     elif 'Res' in self.args.model:
                             outputs = self.model(batch_x)
@@ -584,7 +613,8 @@ class Exp_Main(Exp_Basic):
                 # encoder - decoder
                 if self.args.use_amp:
                     with torch.cuda.amp.autocast():
-                        if 'Linear' in self.args.model:
+                        #if 'Linear' in self.args.model or 'Model' in self.args.model:
+                        if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                             outputs = self.model(batch_x)
                         else:
                             if self.args.output_attention:
@@ -592,7 +622,8 @@ class Exp_Main(Exp_Basic):
                             else:
                                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                 else:
-                    if 'Linear' in self.args.model:
+                    #if 'Linear' in self.args.model or 'Model' in self.args.model:
+                    if 'Linear' in self.args.model or 'My_Model' == self.args.model:
                         outputs = self.model(batch_x)
                     else:
                         if self.args.output_attention:
