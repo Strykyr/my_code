@@ -1,6 +1,7 @@
 #from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,My_ModelD
+# ,My_Attention,My_Model,Attention,My_ModelD
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
 from torch.utils.data import Dataset, DataLoader
@@ -73,7 +74,7 @@ class MyDataset(Dataset):
         return len(self.data)
 
 seq_len = 100
-pre_len = 90
+pre_len = 30
 
 def my_data(split,data):
 
@@ -106,7 +107,7 @@ def my_data(split,data):
                     seq.append((train_seq, train_label))
         seq = MyDataset(seq)
         # 多线程取数据集
-        seq = DataLoader(dataset=seq, batch_size=600, shuffle=True, num_workers=4, drop_last=True)
+        seq = DataLoader(dataset=seq, batch_size=1000, shuffle=True, num_workers=4, drop_last=True)
         return seq
     # 测试集
     else:
@@ -167,10 +168,10 @@ class Exp_Main(Exp_Basic):
             'LSTM': LSTM,
             'Attention_LSTM':Attention_LSTM,
             'CNN_LSTM':CNN_LSTM,
-            'My_Attention':My_Attention,
-            'My_Model': My_Model,
-            'Attention': Attention,
-            'My_ModelD' : My_ModelD,
+            # 'My_Attention':My_Attention,
+            # 'My_Model': My_Model,
+            # 'Attention': Attention,
+            # 'My_ModelD' : My_ModelD,
         }
         model = model_dict[self.args.model].Model(self.args).float()
         #print(model) #=============================================

@@ -8,7 +8,7 @@ import torch.optim as optim
 import torch.autograd as autograd
 from layers.Embed import DataEmbedding,DataEmbedding_wo_pos,DataEmbedding_wo_temp
 # initialization
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 n_input = 2; n_hidden = 64
 
 class Model(nn.Module):
@@ -20,7 +20,7 @@ class Model(nn.Module):
         self.d_model = configs.d_model
         self.d_ff = configs.d_ff
         # intialise weights of the attention mechanism
-        self.weight = nn.Parameter(torch.zeros(1)).to(device)
+        self.weight = nn.Parameter(torch.zeros(1))
         self.enc_embedding = DataEmbedding_wo_temp(configs.enc_in, configs.d_model, configs.embed, configs.freq,
                                                     configs.dropout)
         # intialise cnn structure

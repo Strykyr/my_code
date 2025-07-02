@@ -506,3 +506,47 @@ Traceback (most recent call last):
     from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,Attention,
                        ^
 SyntaxError: trailing comma not allowed without surrounding parentheses
+Traceback (most recent call last):
+  File "run2.py", line 162, in <module>
+    exp.train(setting)
+  File "/data1/surb21/1/my_code/exp/exp_main2.py", line 306, in train
+    outputs = self.model(batch_x)
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/data1/surb21/1/my_code/models/Resnet_LSTM.py", line 63, in forward
+    residuals = x + self.weight * cnn_output
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
+Traceback (most recent call last):
+  File "test2.py", line 163, in <module>
+    exp.test(setting,test = 1)
+  File "/data1/surb21/1/my_code/exp/exp_test2.py", line 358, in test
+    self.model.load_state_dict(torch.load(os.path.join(self.folder_path + self.args.model + '/checkpoints/', 'checkpoint.pth')),False)
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 594, in load
+    with _open_file_like(f, 'rb') as opened_file:
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 230, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 211, in __init__
+    super(_open_file, self).__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: './data2/door_water/Resnet_LSTM/checkpoints/checkpoint.pth'
+./myrun2.sh: 106: done_pathlogs/Transformer.log: not found
+Traceback (most recent call last):
+  File "run2.py", line 162, in <module>
+    exp.train(setting)
+  File "/data1/surb21/1/my_code/exp/exp_main2.py", line 377, in train
+    self.model.load_state_dict(torch.load(best_model_path))
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 1097, in load
+    return _load(
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 1525, in _load
+    result = unpickler.load()
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 1492, in persistent_load
+    typed_storage = load_tensor(dtype, nbytes, key, _maybe_decode_ascii(location))
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 1466, in load_tensor
+    wrap_storage=restore_location(storage, location),
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 414, in default_restore_location
+    result = fn(storage, location)
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 391, in _deserialize
+    device = _validate_device(location, backend_name)
+  File "/home/surb21/.conda/envs/t2/lib/python3.8/site-packages/torch/serialization.py", line 372, in _validate_device
+    raise RuntimeError(f'Attempting to deserialize object on {backend_name.upper()} device '
+RuntimeError: Attempting to deserialize object on CUDA device 1 but torch.cuda.device_count() is 1. Please use torch.load with map_location to map your storages to an existing device.
+./myrun2.sh: 107: Syntax error: end of file unexpected (expecting "done")

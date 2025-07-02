@@ -1,5 +1,6 @@
 from exp.exp_basic import Exp_Basic
-from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Attention,My_Model,My_ModelD
+#,My_Attention,My_Model,My_ModelD
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Model
 
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
@@ -53,7 +54,7 @@ class MyDataset(Dataset):
         return len(self.data)
        
 seq_len = 100
-pre_len = 90
+pre_len = 30
 
 def my_data(split,data):
 
@@ -146,10 +147,11 @@ class Exp_Main(Exp_Basic):
             'Resnet': Resnet,
             'LSTM': LSTM,
             'CNN_LSTM':CNN_LSTM,
-            'My_Attention':My_Attention,
-            'My_Model': My_Model,
-            'Attention': Attention,
-            'My_ModelD': My_ModelD
+            'My_Model':My_Model,
+            # 'My_Attention':My_Attention,
+            # 'My_Model': My_Model,
+            # 'Attention': Attention,
+            # 'My_ModelD': My_ModelD
         }
         model = model_dict[self.args.model].Model(self.args).float()
 
@@ -519,9 +521,9 @@ class Exp_Main(Exp_Basic):
             # # # # print('==========  mse:{}, mae:{}'.format(mse, mae))
 
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
-            # # door
+            # door
             #f.write("50个时间步长--------------------" + "  \n")
-            f.write(dict[j] + "s222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "s2222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
@@ -539,7 +541,7 @@ class Exp_Main(Exp_Basic):
         if load:
             path = os.path.join(self.args.checkpoints, setting)
             best_model_path = path + '/' + 'checkpoint.pth'
-            self.model.load_state_dict(torch.load(best_model_path))
+            self.model.load_state_dict(torch.load(best_model_path,map_location='cuda:0'))
 
         preds = []
 
