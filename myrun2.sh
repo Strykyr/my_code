@@ -1,4 +1,4 @@
-folder_path=./data2/door_exhaust/
+folder_path=./data2/door_water/
 #folder_path=./data2/door1/
 
 if [ ! -d folder_path"logs" ]; then
@@ -44,21 +44,21 @@ fi
 # done
 
 
-#Transformer
-# for model_name in Transformer
-# do
-# python -u run2.py \
-#   --is_training 1 \
-#   --model_id exchange_96_$pred_len \
-#   --model $model_name \
-#   --features M \
-#   --folder_path $folder_path \
-#   --e_layers 2 \
-#   --d_layers 1 \
-#   --factor 3 \
-#   --des 'Exp' \
-#   --itr 1 >$folder_path'logs/'$model_name'.log'
-# done
+#Transformer Attention_LSTM
+for model_name in Attention_LSTM
+do
+python -u run2.py \
+  --is_training 1 \
+  --model_id exchange_96_$pred_len \
+  --model $model_name \
+  --features M \
+  --folder_path $folder_path \
+  --e_layers 2 \
+  --d_layers 1 \
+  --factor 3 \
+  --des 'Exp' \
+  --itr 1 >$folder_path'logs/'$model_name'.log'
+done
 
 
 # # # test new部分>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..
@@ -90,7 +90,7 @@ fi
 
 
 #==========================================================
-for model_name in Transformer
+for model_name in Attention_LSTM
 do
 python -u test2.py \
   --is_training 1 \
