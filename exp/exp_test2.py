@@ -1,6 +1,6 @@
 from exp.exp_basic import Exp_Basic
 #,My_Attention,My_Model,My_ModelD
-from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Model
+from models import Attention, Informer, Autoformer, Transformer, DLinear, Linear, NLinear,Resnet_LSTM,Resnet,LSTM,CNN_LSTM,Attention_LSTM,My_Model,My_Model_C,My_Model_P
 
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
@@ -20,6 +20,21 @@ import numpy as np
 warnings.filterwarnings('ignore')
 
 
+class Intervention(nn.Module):
+    def __init__(self, num_classes=9, embed_dim=4):
+        super().__init__()
+        self.embedding = nn.Embedding(num_classes, embed_dim)
+        self.linear = nn.Linear(embed_dim, 2)
+    
+    def forward(self, x):
+        emb = self.embedding(x)  # [batch_size, embed_dim]
+        out = self.linear(emb)   # [batch_size, 1]
+        return out.squeeze(-1)   # [batch_size]
+
+InterventionModel = Intervention()
+intervention_dict = {'11': 0, '12': 1, '13': 2, 'ts1': 3, 'ts2': 4, 'ts3': 5, '21': 6, '22': 7, '23': 8}
+input_id = torch.LongTensor([intervention_dict['11'],intervention_dict['12'],intervention_dict['13'],intervention_dict['ts1'],intervention_dict['ts2'],intervention_dict['ts3'],intervention_dict['21'],intervention_dict['22'],intervention_dict['23']])  # 批量输入3个干预编号
+intervention_index = InterventionModel(input_id).detach()
 
 # 遍历文件夹中的所有文件
 def get_data(folder_path):
@@ -56,12 +71,24 @@ class MyDataset(Dataset):
 seq_len = 100
 pre_len = 30
 
+
+
+train_i = -1
+test_i = -1
 def my_data(split,data):
 
     scaler = MinMaxScaler()
     seq = []
+    global intervention_index
+    global train_i, test_i
+
     # 训练和验证
     if split != 'test':    
+
+        #A===========
+        train_i = train_i + 1
+        train_i = train_i // 2
+
         for i in range(len(data)):
             x = data[i]
             # 归一化
@@ -82,6 +109,9 @@ def my_data(split,data):
                     #for k in range(i+100,i+190):
                         train_label.append([normalized_data[k,j], normalized_data[k,-1]])
                     train_seq = torch.FloatTensor(train_seq).reshape(-1,2)
+
+                    #===============
+                    train_seq = torch.cat((train_seq, intervention_index[train_i].unsqueeze(0)), dim=0)
                     train_label = torch.FloatTensor(train_label).reshape(-1,2)
                     seq.append((train_seq, train_label))
         seq = MyDataset(seq)
@@ -90,6 +120,10 @@ def my_data(split,data):
         return seq
     # 测试集
     else:
+
+        #=====
+        test_i = test_i + 1
+
         # split
         scaler = MinMaxScaler()
 
@@ -114,6 +148,9 @@ def my_data(split,data):
                 # 第二个
                 test_label.append([normalized_data[k,10], normalized_data[k,-1]])
             test_seq = torch.FloatTensor(test_seq).reshape(-1,2)
+
+            #=================
+            test_seq = torch.cat((test_seq, intervention_index[test_i].unsqueeze(0)), dim=0)
             test_label = torch.FloatTensor(test_label).reshape(-1,2)
             seq.append((test_seq, test_label))
         
@@ -148,6 +185,8 @@ class Exp_Main(Exp_Basic):
             'LSTM': LSTM,
             'CNN_LSTM':CNN_LSTM,
             'My_Model':My_Model,
+            'My_Model_C':My_Model_C,
+            'My_Model_P':My_Model_P,
             # 'My_Attention':My_Attention,
             # 'My_Model': My_Model,
             # 'Attention': Attention,
@@ -183,11 +222,14 @@ class Exp_Main(Exp_Basic):
                 # batch_x_mark = batch_x_mark.float().to(self.device)
                 # batch_y_mark = batch_y_mark.float().to(self.device)
 
+
+
                 # decoder input
                 dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
                 dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
                 # encoder - decoder
-                if 'Linear' in self.args.model or 'My_Model' == self.args.model:
+                batch_x = batch_x[:, :-1, :]
+                if 'Linear' in self.args.model or 'My_Model' in self.args.model:
                     outputs = self.model(batch_x)
                 else:
                     if self.args.output_attention:
@@ -242,15 +284,16 @@ class Exp_Main(Exp_Basic):
                 iter_count += 1
                 model_optim.zero_grad()
                 batch_x = batch_x.float().to(self.device)
-
                 batch_y = batch_y.float().to(self.device)
                 # batch_x_mark = batch_x_mark.float().to(self.device)
                 # batch_y_mark = batch_y_mark.float().to(self.device)
 
+
+
                 # decoder input
                 dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
                 dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
-
+                batch_x = batch_x[:, :-1, :]
                 # encoder - decoder
                 # if self.args.use_amp:
                 #     with torch.cuda.amp.autocast():
@@ -268,7 +311,7 @@ class Exp_Main(Exp_Basic):
                 #         loss = criterion(outputs, batch_y)
                 #         train_loss.append(loss.item())
                 # else:
-                if 'Linear' in self.args.model or 'My_Model' == self.args.model:
+                if 'Linear' in self.args.model or 'My_Model' in self.args.model:
                         outputs = self.model(batch_x)
                 elif 'Res' in self.args.model:
                             outputs = self.model(batch_x)
@@ -392,9 +435,12 @@ class Exp_Main(Exp_Basic):
                     # batch_x_mark = batch_x_mark.float().to(self.device)
                     # batch_y_mark = batch_y_mark.float().to(self.device)
 
+
+
                     # decoder input
                     dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
                     dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
+                    batch_x = batch_x[:, :-1, :]
                     # encoder - decoder
                     # if self.args.use_amp:
                     #     with torch.cuda.amp.autocast():
@@ -406,7 +452,7 @@ class Exp_Main(Exp_Basic):
                     #             else:
                     #                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                     # else:
-                    if 'Linear' in self.args.model or 'My_Model' == self.args.model:
+                    if 'Linear' in self.args.model or 'My_Model' in self.args.model:
                             outputs = self.model(batch_x)
                     elif 'Res' in self.args.model:
                             outputs = self.model(batch_x)
@@ -505,7 +551,7 @@ class Exp_Main(Exp_Basic):
 
 
                     # 保存csv文件
-            # 将数据合并成一个字典列表，每个字典代表一行数据
+            # # 将数据合并成一个字典列表，每个字典代表一行数据
             data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues, preds)]
             # 将字典列表转换为DataFrame
             df = pd.DataFrame(data_rows)
@@ -527,10 +573,10 @@ class Exp_Main(Exp_Basic):
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
-            # f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
-            # f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
-            # f.write('\n')
-            # f.write('\n')
+            # # # f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            # # # f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
+            # # # f.write('\n')
+            # # # f.write('\n')
             f.close()
 
         return
@@ -553,13 +599,17 @@ class Exp_Main(Exp_Basic):
                 batch_x_mark = batch_x_mark.float().to(self.device)
                 batch_y_mark = batch_y_mark.float().to(self.device)
 
+
+
+                
                 # decoder input
                 dec_inp = torch.zeros([batch_y.shape[0], self.args.pred_len, batch_y.shape[2]]).float().to(batch_y.device)
                 dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
+                batch_x = batch_x[:, :-1, :]
                 # encoder - decoder
                 if self.args.use_amp:
                     with torch.cuda.amp.autocast():
-                        if 'Linear' in self.args.model or 'My_Model' == self.args.model:
+                        if 'Linear' in self.args.model or 'My_Model' in self.args.model:
                             outputs = self.model(batch_x)
                         else:
                             if self.args.output_attention:
@@ -567,7 +617,7 @@ class Exp_Main(Exp_Basic):
                             else:
                                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                 else:
-                    if 'Linear' in self.args.model or 'My_Model' == self.args.model:
+                    if 'Linear' in self.args.model or 'My_Model' in self.args.model:
                         outputs = self.model(batch_x)
                     else:
                         if self.args.output_attention:
