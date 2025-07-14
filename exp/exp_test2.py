@@ -137,16 +137,16 @@ def my_data(split,data):
             #for k in range(i,i+100):
             for k in range(i,i+seq_len):
                 # 第一个测点
-                #test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
+                test_seq.append([normalized_data[k,3],normalized_data[k,-1]])
                 #第二个测定点
-                test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
+                #test_seq.append([normalized_data[k,10],normalized_data[k,-1]])
             # 10个时间点3s
             #for k in range(i+100,i+160):
             for k in range(i+seq_len,i + pre_len + seq_len):
                 # 第一个测点
-                #test_label.append([normalized_data[k,3], normalized_data[k,-1]])
+                test_label.append([normalized_data[k,3], normalized_data[k,-1]])
                 # 第二个
-                test_label.append([normalized_data[k,10], normalized_data[k,-1]])
+                #test_label.append([normalized_data[k,10], normalized_data[k,-1]])
             test_seq = torch.FloatTensor(test_seq).reshape(-1,2)
 
             #=================
@@ -516,12 +516,12 @@ class Exp_Main(Exp_Basic):
                 exit()
             # 画图
             # 第一个测点
-            #min_val = self.test_data[j].iloc[:,3].min()
-            #max_val = self.test_data[j].iloc[:,3].max()
+            min_val = self.test_data[j].iloc[:,3].min()
+            max_val = self.test_data[j].iloc[:,3].max()
             #print(min_val,"=============",max_val)
             # 第二个测点
-            min_val = self.test_data[j].iloc[:,10].min()
-            max_val = self.test_data[j].iloc[:,10].max()
+            #min_val = self.test_data[j].iloc[:,10].min()
+            #max_val = self.test_data[j].iloc[:,10].max()
 
             min_val_t = self.test_data[j].iloc[:,-1].min()
             max_val_t = self.test_data[j].iloc[:,-1].max()
@@ -556,27 +556,27 @@ class Exp_Main(Exp_Basic):
             # 将字典列表转换为DataFrame
             df = pd.DataFrame(data_rows)
             # 将DataFrame保存到CSV文件
-            df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior2.csv', index=False)
+            df.to_csv(self.folder_path + self.args.model + '/' + dict[k] + 'senior1.csv', index=False)
 
-            # data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
-            # # 将字典列表转换为DataFrame
-            # df = pd.DataFrame(data_rows)
-            # #将DataFrame保存到CSV文件
-            # df.to_csv(self.folder_path + self.args.model +  '/' + dict[k] + 'ceiling.csv', index=False)
+            data_rows = [{'time': t, 'Real': r, 'Predicted Value': p} for t, r, p in zip(self.time[-len(preds):], trues_t, preds_t)]
+            # 将字典列表转换为DataFrame
+            df = pd.DataFrame(data_rows)
+            #将DataFrame保存到CSV文件
+            df.to_csv(self.folder_path + self.args.model +  '/' + dict[k] + 'ceiling.csv', index=False)
 
             # # # # print('==========  mse:{}, mae:{}'.format(mse, mae))
 
             f = open(self.folder_path + self.args.model + "/result.txt", 'a')
             # door
             #f.write("50个时间步长--------------------" + "  \n")
-            f.write(dict[j] + "s2222_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write(dict[j] + "s1_temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
             f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse, mae,rmse, mape, mspe, rse, corr))
             f.write('\n')
             f.write('\n')
-            # # # f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
-            # # # f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
-            # # # f.write('\n')
-            # # # f.write('\n')
+            f.write(dict[j] + "ceiling temperature>>>>>>>>>>>>>>>>>>>>>>." + "  \n")
+            f.write('mse:{}, mae:{}, rmse:{},mape:{},mspe:{},rse:{}, corr:{}'.format(mse_t, mae_t,rmse_t, mape_t, mspe_t, rse_t, corr_t))
+            f.write('\n')
+            f.write('\n')
             f.close()
 
         return
